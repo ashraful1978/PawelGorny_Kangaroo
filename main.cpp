@@ -61,6 +61,8 @@ void printUsage() {
   printf(" -o fileName: output result to fileName\n");
   printf(" -l: List cuda enabled devices\n");
   printf(" -check: Check GPU kernel vs CPU\n");
+  printf(" -stride: Use sparse range with a given stride\n");
+  //printf(" -checksum: Use sparse range with a given checksum\n");
   printf(" inFile: intput configuration file\n");
   exit(0);
 
@@ -156,13 +158,15 @@ static string mergeDest = "";
 static string mergeDir = "";
 static string infoFile = "";
 static double maxStep = 0.0;
-static int wtimeout = 3000;
+static int wtimeout = 7000;
 static int ntimeout = 3000;
 static int port = 17403;
 static bool serverMode = false;
 static string serverIP = "";
 static string outputFile = "";
 static bool splitWorkFile = false;
+static string stride = "";
+//static string checksum = "";
 
 int main(int argc, char* argv[]) {
 
@@ -298,10 +302,19 @@ int main(int argc, char* argv[]) {
     } else if(strcmp(argv[a],"-check") == 0) {
       checkFlag = true;
       a++;
-    } else if(a == argc - 1) {
+    } else if(strcmp(argv[a],"-stride") == 0) {
+      CHECKARG("-stride",1);
+      stride = string(argv[a]);
+      a++;
+    } /*else if (strcmp(argv[a], "-checksum") == 0) {
+           CHECKARG("-checksum",1);
+           checksum = string(argv[a]);
+           a++;
+         } */else if(a == argc - 1) {
       configFile = string(argv[a]);
       a++;
-    } else {
+    } 
+    else {
       printf("Unexpected %s argument\n",argv[a]);
       exit(-1);
     }
@@ -348,6 +361,12 @@ int main(int argc, char* argv[]) {
         exit(-1);
       }
     }
+    if (stride.length()>0){
+	  v->SetStride(stride);
+    }
+    /*if (checksum.length()>0) {
+      v->SetChecksum(checksum);
+    }*/
     if(serverMode)
       v->RunServer();
     else

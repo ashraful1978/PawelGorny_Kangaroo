@@ -26,6 +26,7 @@
 #include <signal.h>
 #ifndef WIN64
 #include <pthread.h>
+#include <netdb.h>
 #else
 #include "WindowsErrors.h"
 #endif
